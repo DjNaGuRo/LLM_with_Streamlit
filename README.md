@@ -1,25 +1,27 @@
-# Projet : Chatbot basé sur un RAG
+# Project : LLM Applications with GUI in Streamlit
 
-Système de RAG (Retrieval-Augmented Generation) simple qui répond aux questions des utilisateurs en s'appuyant sur un ensemble de pages Wikipedia portant sur l'IA générative.
+This project aims to centralize several applications of LLMs using some technologies like RAG (Retrieval Augmented Generation), LangChain, LangSmith.
 
-## Installer les dépendances
+- Wiki Chatbot: A chatbot interface to answer users' questions w.r.t Wikipedia content.
 
-```
+## Install dependencies
+
+```python
 pip install -r requiments.txt
 ```
 
-## Créer le fichier .env
+## Create a .env file following the .env.template
 
 Créer le fichier `.env` à partir du fichier `.env.template` :
 
-```
+```bash
 cp .env.template .env
 ```
 
-Puis éditer le fichier `.env` pour y ajouter les informations nécessaires.
+Edit the `.env` for fulfill necessary information.
 
-## Lancer le projet
+## Launch the project
 
-```
-python main.py
+```bash
+streamlit run main.py
 ```
