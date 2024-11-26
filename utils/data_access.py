@@ -1,5 +1,5 @@
 import requests
-from langchain_community.retrievers import WikipediaRetriver
+from langchain_community.retrievers import WikipediaRetriever
 from typing import List, Optional
 
 def get_wikipedia_page(title: str) -> str:
@@ -37,7 +37,7 @@ def format_docs(docs:List[str]):
     ])
 
 def wikipedia_retriever(question: str):
-    wiki_retriever = WikipediaRetriver()
+    wiki_retriever = WikipediaRetriever()
     docs = wiki_retriever.invoke(question)
     context = format_docs(docs)
     return context

@@ -2,7 +2,7 @@ import requests
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
-from lang_chain_openai import ChatOpenAPI
+from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 import os
 
@@ -25,8 +25,8 @@ load_dotenv()
 #     "Midjourney",
 #     "Stable_Diffusion"
 # ]
-api_key = os.get("OPENAI_TOKEN")
-llm = ChatOpenAPI(api_key=api_key)
+api_key = os.getenv("OPENAI_TOKEN")
+llm = ChatOpenAI(api_key=api_key)
 
 def wiki_answer(query, llm):
     prompt = ChatPromptTemplate.from_template(
@@ -61,8 +61,9 @@ if __name__ == "__main__":
             print('-' * 50)
             print('Ask a question :')
             question = input('> ')
-            print()
-            wiki_answer(question)
+            print("--- Answer ---")
+            response = wiki_answer(question, llm)
+            print(response)
             print('\n')
 
     except KeyboardInterrupt:
