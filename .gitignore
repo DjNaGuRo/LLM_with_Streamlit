@@ -1,3 +1,4 @@
 .env
 venv_chatbot_rag/
 **/__pycache__
+.streamlit/

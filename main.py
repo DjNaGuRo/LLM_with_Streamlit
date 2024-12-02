@@ -1,70 +1,58 @@
-import requests
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
+import streamlit as st
 from langchain_openai import ChatOpenAI
-from dotenv import load_dotenv
-import os
 
-from utils.data_access import wikipedia_retriever
+#from dotenv import load_dotenv
+#import os
 
-load_dotenv()
+from WikiChatbot.wikiChatbot import wiki_answer
 
 
-# PAGES = [
-#     "Intelligence_artificielle_générative",
-#     "Transformeur_génératif_préentraîné",
-#     "Google_Gemini",
-#     "Grand_modèle_de_langage",
-#     "ChatGPT",
-#     "LLaMA",
-#     "Réseaux_antagonistes_génératifs",
-#     "Apprentissage_auto-supervisé",
-#     "Apprentissage_par_renforcement",
-#     "DALL-E",
-#     "Midjourney",
-#     "Stable_Diffusion"
-# ]
-api_key = os.getenv("OPENAI_TOKEN")
-llm = ChatOpenAI(api_key=api_key)
+#load_dotenv()
+#api_key = os.getenv("OPENAI_TOKEN")
 
-def wiki_answer(query, llm):
-    prompt = ChatPromptTemplate.from_template(
-        """
-            You're an AI assantant specialized on Wikipedia content that answer
-            in a professional and user-friendly manner questions. 
-            Use the provided context to answer the user's question.
-            In case, you cannot get relevant information from Wikipedia, kindly response to the user
-            that you're sorry but no wikipedia content is related to their question.
+st.title("LLM Apps")
+sidebar = st.sidebar
+openai_api_key = sidebar.text_input("Enter an OpenAI API key", type="password")
 
-            Context: {context}
+# Check the OPENAI API key provided
+if not(openai_api_key and openai_api_key.startswith("sk-")):
+    st.warning("Please enter a valid OpenAI API key!", icon="⚠")
+else:
+    # Create an openai-based llm using langchain
+    llm = ChatOpenAI(api_key=openai_api_key, model="gpt-3.5-turbo")
+    # Initialize chat history
+    if "messages" not in st.session_state:
+        st.session_state.messages = [{"role":"ai", "content":"""I'm a AI bot dedicated to scroll Wikipedia content to answer your question.
+                                      You should my answer with caution as an LLM-based chatbot, sometimes I can hallucination."""}]
 
-            Question: {question}
-        """
-    )
-    wiki_chain = (
-        {"context": RunnablePassthrough() | wikipedia_retriever,
-         "question": RunnablePassthrough()} |
-         prompt |
-         llm |
-         StrOutputParser()
-    )
-    response = wiki_chain.invoke(query)
-    return response
+    # Display chat messages from history on app rerun
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
+    # Get user input
+    if query := st.chat_input("How can I assist you?"):
+        # Add user message to chat history
+        st.session_state.messages.append(
+            {"role":"human", "content": query}
+        )
+        # Display user input
+        with st.chat_message("human"):
+            st.markdown(query)
+
+        # Display assistant/ai response in chat message container
+        with st.chat_message("ai"):
+            response = wiki_answer(query, llm)
+            st.markdown(response)
+        
+        # Add AI response in session state messages for history
+        st.session_state.messages.append({
+            "role": "ai",
+            "content": response
+        })
+   
+
+     
 
 if __name__ == "__main__":
-    print('Building Wikipedia chatbot...')
-
-    try:
-        while True:
-            print('-' * 50)
-            print('Ask a question :')
-            question = input('> ')
-            print("--- Answer ---")
-            response = wiki_answer(question, llm)
-            print(response)
-            print('\n')
-
-    except KeyboardInterrupt:
-        print("\nExiting...")
+    pass
