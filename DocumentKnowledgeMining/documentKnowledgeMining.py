@@ -4,6 +4,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
+import chromadb
 
 # Import for streamlit purpose: the import path starts at the location of the streamlit entrypoint
 #from DocumentKnowledgeMining.utils.retrievers import save_in_chroma, load_pdf, split_documents
@@ -28,6 +29,7 @@ def knownledge_answer(question:str, retriever, llm):
     )
 
     response = chain.invoke(question)
+    #chromadb.api.client.SharedSystemClient.clear_system_cache()
     return response
 
 

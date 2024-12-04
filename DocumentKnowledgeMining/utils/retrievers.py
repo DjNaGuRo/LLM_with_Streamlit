@@ -6,23 +6,28 @@ from langchain_experimental.text_splitter import SemanticChunker
 from langchain_chroma import Chroma
 from typing import Literal
 import tiktoken
+import streamlit as st
+
 
 def load_csv(filepath):
     csv_loader = CSVLoader(filepath)
     documents = csv_loader.load()
     return documents
 
+
 def load_pdf(filepath):
     pdf_loader = PyPDFLoader(filepath)
     documents = pdf_loader.load()
     return documents
+
 
 def load_markdown(filepath):
     md_loader = UnstructuredMarkdownLoader(filepath)
     documents = md_loader.load()
     return documents
 
-def split_documents(docs, type: Literal["recursive", "semantic", "token"] = "token", openai_api_key:str=None):
+
+def split_documents(_docs, type: Literal["recursive", "semantic", "token"] = "token", openai_api_key:str=None):
     if type == "recursive":
         splitter = RecursiveCharacterTextSplitter(chunk_size=250, chunk_overlap=50)
     elif type == "semantic":
@@ -42,17 +47,18 @@ def split_documents(docs, type: Literal["recursive", "semantic", "token"] = "tok
             chunk_size=25,
             chunk_overlap=5
         )
-    docs_chunks = splitter.split_documents(docs)
+    docs_chunks = splitter.split_documents(_docs)
     return docs_chunks
 
-def save_in_chroma(docs_chunks, openai_api_key):
+
+def save_in_chroma(_docs_chunks, openai_api_key):
     embedding_model = OpenAIEmbeddings(
         api_key = openai_api_key,
         model = "text-embedding-3-small"
     )
 
     vector_store = Chroma.from_documents(
-        documents = docs_chunks,
+        documents = _docs_chunks,
         embedding = embedding_model
     )
 
